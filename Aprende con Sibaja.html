@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aprende con Sibaja</title>
+<style>
+:root{--bg:#FAF6EF;--bg2:#F1EADF;--card:#fff;--tx:#1F1B16;--tx2:#6B6257;--ac:#D94A2B;--ok:#1E8E5A;--er:#C8382F;--bd:#E2D9CA;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root{--bg:#16130F;--bg2:#211D18;--card:#2A2520;--tx:#F5EFE6;--tx2:#B3A99B;--ac:#FF7A59;--ok:#4CC38A;--er:#FF6B63;--bd:#3A342D}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+h1,h2,.logo{font-family:Outfit,"Avenir Next",system-ui,sans-serif;margin:0;letter-spacing:-.02em}
+main{max-width:600px;margin:0 auto;padding:20px 20px 40px}
+.logo{font-size:24px;font-weight:700}.logo b{color:var(--ac)}
+.hero{font-size:clamp(34px,9vw,52px);line-height:1.05;font-weight:800;margin:22px 0 10px}.hero span{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:20px;margin:16px 0}
+.btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:14px 20px;min-height:48px;cursor:pointer;background:var(--ac);color:#fff;width:100%;margin-top:10px}
+.btn:hover{filter:brightness(.94)}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.5;cursor:wait}
+.btn.sec{background:var(--bg2);color:var(--tx);border:1px solid var(--bd)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+label{display:block;font-size:14px;color:var(--tx2);margin:14px 0 4px}
+input,select{font:inherit;width:100%;padding:12px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);min-height:46px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;background:var(--card);color:var(--tx);border:2px solid var(--bd);border-radius:14px;padding:14px;min-height:56px;font:inherit;cursor:pointer;margin:8px 0}
+.opt kbd{background:var(--bg2);border-radius:6px;padding:2px 8px;font-size:13px;color:var(--tx2)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--card))}
+.opt.bad{border-color:var(--er);background:color-mix(in srgb,var(--er) 12%,var(--card))}
+.q{font:600 22px/1.35 Outfit,system-ui,sans-serif;margin:14px 0}
+.bar{height:8px;background:var(--bg2);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);transition:width .25s}
+.bar.ld i{background:var(--bd)}
+.meta{display:flex;justify-content:space-between;color:var(--tx2);font-size:14px;margin:8px 0;gap:8px}
+.tag{display:inline-block;font-size:12px;padding:2px 10px;border-radius:99px;background:var(--bg2);color:var(--tx2)}
+.note{font-size:13px;color:var(--tx2)}.err{color:var(--er)}.c{text-align:center}
+.big{font-size:44px;line-height:1;display:inline-block;animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.25) rotate(-6deg)}}
+.spin{width:36px;height:36px;border:4px solid var(--bd);border-top-color:var(--ac);border-radius:50%;margin:24px auto;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.ex{white-space:pre-wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}
+.rw{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd);font-size:14px}.rw:last-child{border:0}
+.st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.st b{display:block;font-size:26px;font-family:Outfit,system-ui}
+footer{text-align:center;color:var(--tx2);font-size:13px;margin-top:32px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+const AREAS={
+"Salud":["Medicina","Enfermería","Farmacia","Odontología","Fisioterapia","Psicología","Nutrición y Dietética","Veterinaria","Biomedicina"],
+"Ingeniería y tecnología":["Ingeniería Informática","Ingeniería Industrial","Ingeniería Civil","Ingeniería Mecánica","Ingeniería Eléctrica","Ingeniería de Telecomunicaciones","Arquitectura","Ingeniería Química","Ingeniería Aeroespacial"],
+"Ciencias":["Matemáticas","Física","Química","Biología","Ciencias Ambientales","Estadística","Geología"],
+"Economía y empresa":["Administración de Empresas (ADE)","Economía","Contabilidad y Finanzas","Marketing","Turismo","Relaciones Laborales"],
+"Derecho y sociales":["Derecho","Ciencias Políticas","Sociología","Trabajo Social","Criminología","Educación Infantil","Educación Primaria","Pedagogía"],
+"Humanidades y comunicación":["Historia","Filosofía","Filología / Lenguas","Periodismo","Comunicación Audiovisual","Publicidad","Bellas Artes","Traducción e Interpretación"]};
+const WELCOME=["{n}, ¿hoy sí estudiamos o hoy sí scrolleamos? 😏","¡{n}! Tu futuro título te está mirando desde el futuro.","Bienvenida/o, {n}. El café ya está hecho; las neuronas, vamos a ver.","{n}, que no se diga que no lo intentaste. ¡A por ello!"];
+const FAIL=["{n}, ¿tu cerebro está de vacaciones o solo en otra pestaña? 😅","{n}, tienes la cabeza en otra parte, ¡por dioooos! 🙈","Uy, {n}. Esa respuesta la firmó tu yo de las 3 de la madrugada.","{n}, eso no estaba en tus apuntes… pero ahora sí lo estará.","Mi tutor IA acaba de suspirar, {n}. Tranqui, es de cariño. 😌","Error clásico, {n}: confiar en el café y no en los apuntes. ☕","{n}, hasta Einstein tuvo días así. Bueno, quizá no tantos 😂","Casi, {n}. Casi casi casi… no. Pero la explicación te salva 👇","{n}, ¿y si la próxima vez también lees la pregunta? Es broma… ¿o no? 😜"];
+const WIN=["¡Toma ya, {n}! 🔥","¡Eso es, {n}! Tu profe sonríe en algún lugar.","{n} en modo crack. 😎","Correcto. Qué miedo das, {n}.","¡Esa neurona sí ha venido a trabajar, {n}! 🧠","¡Bien jugado, {n}! Sigue así."];
+const STREAK=["¡Racha de {k}! {n}, estás on fire 🔥🔥","¡{k} seguidas! Que alguien avise a la facultad, {n}."];
+const app=document.querySelector("#app"),K="sbj-v3";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pick=a=>a[Math.random()*a.length|0];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let DB={ps:[],cur:null};
+try{const d=JSON.parse(localStorage.getItem(K)||"{}");if(Array.isArray(d.ps))DB=d}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(DB))}catch(e){}};
+const P=()=>DB.ps.find(p=>p.name===DB.cur);
+const say=t=>t.replaceAll("{n}",esc(DB.cur||"")) ;
+let sample=null,R=null,GEN=0,WEL="";
+(async()=>{try{sample=await claude.use("sample")}catch(e){}})();
+const foot=`<footer>Creado por Alejandro Sibaja</footer>`;
+
+function login(msg){
+ app.innerHTML=`<div class="logo">Siba<b>ja</b></div>
+ <h1 class="hero">APRENDE <span>CON SIBAJA</span></h1>
+ <p style="color:var(--tx2);font-size:18px;margin:0"><b>Sácate la carrera.</b> Una IA te pregunta, te explica y se ríe contigo (nunca de ti). Y guarda tus resultados.</p>
+ <div class="card"><label for="nm">¿Cómo te llamas?</label><input id="nm" maxlength="20" placeholder="Ej. Paola" autocomplete="nickname">
+ ${msg?`<p class="err" role="alert">${esc(msg)}</p>`:""}
+ <button class="btn" id="in">Entrar</button>
+ ${DB.ps.length?`<p class="note" style="margin:16px 0 0">O continúa como:</p>${DB.ps.map((p,i)=>`<button class="btn sec" data-i="${i}">${esc(p.name)} · ${p.total} preguntas</button>`).join("")}`:""}</div>
+ <p class="note c">Los perfiles se guardan en este dispositivo y navegador. Para cuentas reales en cualquier dispositivo hace falta un servidor.</p>${foot}`;
+ const go=n=>{let p=DB.ps.find(x=>x.name.toLowerCase()===n.toLowerCase());if(!p){p={name:n,carrera:"Medicina",tema:"",nivel:"intermedio",n:10,vistas:[],total:0,ok:0,best:0,hist:[]};DB.ps.push(p)}DB.cur=p.name;WEL=pick(WELCOME);save();home()};
+ document.querySelector("#in").onclick=()=>{const n=document.querySelector("#nm").value.trim().slice(0,20);n?go(n):login("Escribe tu nombre para empezar.")};
+ document.querySelector("#nm").onkeydown=e=>{if(e.key==="Enter")document.querySelector("#in").click()};
+ document.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>go(DB.ps[+b.dataset.i].name));
+}
+function home(msg){
+ const p=P();R=null;++GEN;
+ const opts=Object.entries(AREAS).map(([a,l])=>`<optgroup label="${a}">${l.map(c=>`<option ${c===p.carrera?"selected":""}>${c}</option>`).join("")}</optgroup>`).join("")+`<option value="__otra">Otra carrera (escríbela)…</option>`;
+ app.innerHTML=`<div class="meta"><span class="logo">Siba<b>ja</b></span><button class="tag" id="out" style="border:0;cursor:pointer">Cambiar usuario</button></div>
+ <h1 style="font-size:28px;margin:10px 0 4px">${say(WEL||"Hola, {n}")}</h1>
+ <div class="card">
+ <label for="ca">¿Qué carrera estudias?</label><select id="ca">${opts}</select>
+ <div id="otw" hidden><label for="ot">Tu carrera</label><input id="ot" maxlength="80" placeholder="Ej. Ingeniería Agrónoma"></div>
+ <label for="tm">Tema o asignatura (opcional)</label><input id="tm" maxlength="120" value="${esc(p.tema)}" placeholder="Ej. Anatomía del corazón, Derecho Civil: contratos…">
+ <div class="row"><div><label for="nv">Nivel</label><select id="nv">${["básico","intermedio","avanzado"].map(x=>`<option ${x===p.nivel?"selected":""}>${x}</option>`).join("")}</select></div>
+ <div><label for="nn">Preguntas (máx. 50)</label><select id="nn">${[5,10,20,30,50].map(x=>`<option ${x===p.n?"selected":""}>${x}</option>`).join("")}</select></div></div>
+ ${msg?`<p class="err" role="alert">${esc(msg)}</p>`:""}
+ <button class="btn" id="go" style="margin-top:18px">Empezar a estudiar</button>
+ <button class="btn sec" id="rs">Mis resultados</button></div>
+ <div class="card note"><b>Importante:</b> las preguntas las genera una IA al momento y no han sido revisadas por profesores ni profesionales. Pueden contener errores. Contrasta siempre con tus apuntes, el temario oficial y tus docentes. Sibaja no garantiza aprobar ninguna asignatura.</div>${foot}`;
+ const ca=document.querySelector("#ca");
+ ca.onchange=()=>document.querySelector("#otw").hidden=ca.value!=="__otra";
+ document.querySelector("#out").onclick=()=>login();
+ document.querySelector("#rs").onclick=resultados;
+ document.querySelector("#go").onclick=()=>{
+  p.carrera=ca.value==="__otra"?document.querySelector("#ot").value.trim().slice(0,80):ca.value;
+  p.tema=document.querySelector("#tm").value.trim().slice(0,120);p.nivel=document.querySelector("#nv").value;p.n=Math.min(50,+document.querySelector("#nn").value||10);
+  if(!p.carrera)return home("Escribe el nombre de tu carrera.");
+  save();generar();
+ };
+}
+function loading(t,sub){app.innerHTML=`<div class="c" style="padding-top:80px"><div class="logo">Siba<b>ja</b></div><div class="spin" role="status" aria-label="Cargando"></div><p>${t}</p><p class="note">${sub||"Puede tardar unos segundos."}</p></div>`}
+async function lote(size){
+ const p=P(),evitar=[...p.vistas.slice(-25),...(R?R.qs.map(q=>q.pregunta.slice(0,80)):[])];
+ const prompt=`Eres un tutor universitario riguroso. Crea ${size} preguntas de opción múltiple EN ESPAÑOL para estudiantes de la carrera "${p.carrera}"${p.tema?` sobre el tema/asignatura: "${p.tema}"`:" cubriendo temas clave y variados de la carrera"}. Nivel: ${p.nivel}.
+Reglas: solo contenido en el que estés muy seguro y sea consensuado en el ámbito académico; nada ambiguo ni con dos respuestas válidas; 4 opciones plausibles; empieza fácil y sube la dificultad; varía los subtemas; la explicación debe enseñar (2-3 frases).
+No repitas ni reformules estas preguntas ya vistas: ${JSON.stringify(evitar)}.
+Responde SOLO con un array JSON con objetos: {"tema":"subtema corto","pregunta":"...","opciones":["CORRECTA","falsa1","falsa2","falsa3"],"explicacion":"..."}. La PRIMERA opción es siempre la correcta.`;
+ const d=await sample.json(prompt,{modelTier:"default",cache:false});
+ const arr=(Array.isArray(d)?d:d.preguntas||[]).filter(x=>x&&x.pregunta&&Array.isArray(x.opciones)&&x.opciones.length===4);
+ if(!arr.length)throw {message:"vacío"};
+ return arr.slice(0,size).map(x=>({...x,ops:shuffle(x.opciones.map((t,i)=>({t:String(t),c:i===0})))}));
+}
+async function generar(){
+ const p=P();
+ if(!sample)return home("Esta función necesita abrir la página dentro de Claude con tu sesión iniciada y dar permiso a la IA.");
+ const id=++GEN;R={id,qs:[],i:0,pts:0,fallos:[],target:p.n,loading:true,waiting:false,racha:0,maxr:0};
+ loading(say("{n}, tu tutor IA está preparando tus preguntas…"),`Cargando 1.ª tanda (${Math.min(10,p.n)} de ${p.n}). Empiezas en cuanto esté lista.`);
+ try{const b=await lote(Math.min(10,p.n));if(R.id!==id)return;R.qs.push(...b);pregunta();seguir(id)}
+ catch(e){if(GEN!==id)return;home(e&&e.code==="not_granted"?"Necesitas dar permiso para usar la IA.":e&&e.code==="rate_limited"?"Demasiadas peticiones seguidas. Espera un momento.":"Mi IA se ha quedado mirando al techo. Inténtalo otra vez 🫠")}
+}
+async function seguir(id){
+ while(R&&R.id===id&&R.qs.length<R.target){
+  try{const b=await lote(Math.min(10,R.target-R.qs.length));if(!R||R.id!==id)return;R.qs.push(...b)}
+  catch(e){if(!R||R.id!==id)return;R.target=R.qs.length;break}
+  if(R.waiting){R.waiting=false;pregunta()}else status();
+ }
+ if(!R||R.id!==id)return;
+ R.loading=false;
+ if(R.waiting){R.waiting=false;R.i<R.qs.length?pregunta():fin()}else status();
+}
+function status(){const s=document.querySelector("#st");if(!s||!R)return;s.textContent=R.loading?`Cargando más preguntas… ${R.qs.length}/${R.target}`:""}
+function pregunta(){
+ const q=R.qs[R.i];R.done=false;
+ app.innerHTML=`<div class="meta"><span>${esc(P().carrera)}</span><span class="tag">${esc(q.tema||"General")}</span><span>${R.i+1}/${R.target}</span></div>
+ <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${R.target}" aria-valuenow="${R.i}"><i style="width:${R.i/R.target*100}%"></i></div>
+ <p class="note" id="st" aria-live="polite" style="margin:4px 0 0"></p>
+ <h2 class="q" tabindex="-1" id="qq">${esc(q.pregunta)}</h2>
+ <div>${q.ops.map((o,i)=>`<button class="opt" data-i="${i}"><kbd>${i+1}</kbd><span>${esc(o.t)}</span></button>`).join("")}</div><div id="fb" aria-live="polite"></div>`;
+ document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>responder(+b.dataset.i));
+ document.querySelector("#qq").focus();status();
+}
+function responder(i){
+ if(R.done)return;R.done=true;
+ const p=P(),q=R.qs[R.i],ok=q.ops[i].c;
+ if(!R.repaso){p.total++;p.vistas.push(q.pregunta.slice(0,90));if(ok)p.ok++}
+ if(ok){R.pts++;R.racha++;R.maxr=Math.max(R.maxr,R.racha)}else{R.racha=0;R.fallos.push(q)}
+ if(R.racha>p.best&&!R.repaso)p.best=R.racha;
+ save();
+ document.querySelectorAll(".opt").forEach((b,k)=>{b.disabled=true;if(q.ops[k].c){b.classList.add("ok");b.firstElementChild.textContent="✓"}else if(k===i){b.classList.add("bad");b.firstElementChild.textContent="✗"}});
+ const last=R.i===R.target-1,msg=ok?(R.racha>=3?pick(STREAK).replace("{k}",R.racha):pick(WIN)):pick(FAIL);
+ document.querySelector("#fb").innerHTML=`<div class="card"><span class="big" aria-hidden="true">${ok?"🎉":"🤦"}</span><p style="margin:8px 0 0"><b>${ok?"✓ Correcto. ":"✗ Incorrecto. "}</b>${say(msg)}</p><p style="margin:8px 0 0">${esc(q.explicacion)}</p>
+ ${ok?"":`<button class="btn sec" id="mas">Explícamelo con más detalle</button>`}<div id="ex"></div></div>
+ <button class="btn" id="nx">${last?"Ver resultados":"Siguiente"}</button>`;
+ document.querySelector("#nx").focus();
+ document.querySelector("#nx").onclick=()=>{
+  R.i++;
+  if(R.i<R.qs.length)pregunta();
+  else if(R.loading){R.waiting=true;loading("Cargando más preguntas…",`${R.qs.length}/${R.target} listas. Ahora vuelvo contigo, ${esc(DB.cur)}.`)}
+  else fin();
+ };
+ const m=document.querySelector("#mas");if(m)m.onclick=async()=>{
+  m.disabled=true;m.textContent="Pensando…";
+  try{const r=await sample(`Explica a un estudiante de ${P().carrera}, de forma clara y con un ejemplo, este concepto. Pregunta: "${q.pregunta}". Respuesta correcta: "${q.ops.find(o=>o.c).t}". Máximo 120 palabras, en español. Si no estás seguro de algo, dilo.`,{cache:false});
+   document.querySelector("#ex").innerHTML=`<div class="ex">${esc(r.text)}</div>`;m.remove()}catch(e){m.disabled=false;m.textContent="No se pudo. Reintentar"}
+ };
+}
+document.addEventListener("keydown",e=>{if(R&&!R.done&&/^[1-4]$/.test(e.key)&&document.querySelector(".opt"))responder(+e.key-1)});
+function fin(){
+ const p=P(),n=R.qs.length,pc=Math.round(R.pts/n*100),temas=[...new Set(R.fallos.map(f=>f.tema).filter(Boolean))];
+ if(!R.repaso){p.hist.push({d:new Date().toLocaleDateString("es"),c:p.carrera,t:p.tema,s:R.pts,n});p.hist=p.hist.slice(-100);save()}
+ const t=pc>=80?"¡Vas como un campeón/a, {n}! 🏆":pc>=50?"Buen avance, {n}. Ya casi. 💪":"Toca repasar, {n}… pero ya empezaste, y eso cuenta. 🌱";
+ app.innerHTML=`<div class="c" style="padding-top:20px"><h1 style="font-size:34px">${say(t)}</h1>
+ <p style="font-size:56px;font-weight:800;margin:6px 0">${R.pts}/${n}</p><p class="note">${pc}% de aciertos · mejor racha ${R.maxr}${R.repaso?"":" · guardado en tus resultados"}</p></div>
+ <div class="card"><b>A reforzar</b><p style="margin:6px 0 0;color:var(--tx2)">${temas.length?temas.map(esc).join(" · "):"No has fallado ninguna. Sube el nivel para seguir creciendo."}</p></div>
+ ${R.fallos.length?`<button class="btn" id="rv">Repasar mis ${R.fallos.length} fallos</button>`:""}
+ <button class="btn ${R.fallos.length?"sec":""}" id="mp">Más preguntas de este tema</button>
+ <button class="btn sec" id="rs">Mis resultados</button><button class="btn sec" id="nt">Cambiar carrera o tema</button>${foot}`;
+ const rv=document.querySelector("#rv");
+ if(rv)rv.onclick=()=>{const f=R.fallos;R={id:++GEN,qs:f.map(q=>({...q,ops:shuffle(q.ops)})),i:0,pts:0,fallos:[],target:f.length,loading:false,waiting:false,racha:0,maxr:0,repaso:true};pregunta()};
+ document.querySelector("#mp").onclick=generar;document.querySelector("#rs").onclick=resultados;document.querySelector("#nt").onclick=()=>home();
+}
+function resultados(){
+ const p=P(),pc=p.total?Math.round(p.ok/p.total*100):0;
+ app.innerHTML=`<div class="meta"><span class="logo">Siba<b>ja</b></span></div><h1 style="font-size:28px">Resultados de ${esc(p.name)}</h1>
+ <div class="card st"><div><b>${p.total}</b><span class="note">respondidas</span></div><div><b>${pc}%</b><span class="note">aciertos</span></div><div><b>${p.best||0}</b><span class="note">mejor racha</span></div></div>
+ <div class="card"><b>Últimas partidas</b>${p.hist.length?[...p.hist].reverse().slice(0,15).map(h=>`<div class="rw"><span>${esc(h.d)} · ${esc(h.c)}${h.t?" · "+esc(h.t):""}</span><b>${h.s}/${h.n}</b></div>`).join(""):`<p class="note">Aún no hay partidas. ¡Empieza la primera!</p>`}</div>
+ <button class="btn" id="bk">Volver</button>${foot}`;
+ document.querySelector("#bk").onclick=()=>home();
+}
+login();
+</script>
+</body>
+</html>
